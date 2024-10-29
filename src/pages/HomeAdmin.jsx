@@ -1,14 +1,20 @@
-import { useEffect } from "react"
+import { useContext, useEffect } from "react"
 import supabase from "../supabase/client"
 import { useNavigate } from "react-router-dom"
 import JuegoFormulario from '../components/JuegoFormulario'
+import {useImportarContextoProd} from "../context/ProdContext"
 
 
 
-
-function Home() {
+function HomeAdmin() {
   
   const navigate = useNavigate();
+
+  {/* //!ACTIVAR CUANDO OCUPE LO DEL LOGIN
+  const obj = useImportarContextoProd();
+
+  console.log(obj);
+  
 
   useEffect(() => {
     
@@ -19,10 +25,18 @@ function Home() {
     
   }, [navigate]);
   
+  */
+}
 
 
   return (
-    <div>
+<>
+
+
+<p>a</p>
+
+{/*
+<div>
       <p>Home</p>
 
       <button type="button"  onClick={ () => supabase.auth.signOut()}>
@@ -30,7 +44,10 @@ function Home() {
       </button>
       <JuegoFormulario/>
     </div>
+ */
+  }
+  </>
   )
 }
 
-export default Home
+export default HomeAdmin

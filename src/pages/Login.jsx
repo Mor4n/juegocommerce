@@ -14,10 +14,7 @@ function Login() {
         try {
             const result = await supabase.auth.signInWithOtp({
                 email,
-                options:{
-                    
-                    shouldCreateUser: false,
-                }
+               
             });
             console.log(result);
         } catch (error) {
