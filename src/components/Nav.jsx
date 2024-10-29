@@ -3,7 +3,7 @@ import { useEffect,useState } from "react";
 import "./nav.css"
 import { useNavigate } from "react-router-dom"
 import supabase from "../supabase/client";
-
+import Checkout from "./Checkout";
 
 function Nav({cart,eliminarDeCarro,incrementarCantidad,decrementarCantidad,limpiarCarrito,vacio,totalPagar}) {
 
@@ -129,12 +129,13 @@ function Nav({cart,eliminarDeCarro,incrementarCantidad,decrementarCantidad,limpi
                                 </tbody>
                             </table>
 
-                            <p className="text-end text-white">Total pagar: <span className="fw-bold">$ {totalPagar} MXN</span></p>
+                            <p className="text-end text-white">Total pagar: <span className="fw-bold">$ {totalPagar.toFixed(2)} MXN</span></p>
 
                             </>
 
                           )
                           }
+                            <Checkout/>
                             <button className="btn btn-light w-100 mt-3 p-2" onClick={limpiarCarrito}>Vaciar Carrito</button>
 
       </div>
