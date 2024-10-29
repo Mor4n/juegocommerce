@@ -93,8 +93,19 @@ import { useImportarContextoProd } from "../context/ProdContext";
     //State derivado
 
   const vacio = useMemo(() =>cart.length ===0, [cart]);//Cada que modifiquemos el carro ejecuta esto. nunca antes o despues
-  const totalPagar = useMemo(() => cart.reduce((total,productoActual)=> total+ (productoActual.cantidad* productoActual.precio),0),[cart])
-
+  const totalPagar = useMemo(() => 
+    cart.reduce((total, productoActual) => {
+      // Si el producto tiene un descuento, calcula el precio descontado
+      const precioFinal = productoActual.descuento 
+        ? productoActual.precio * (1 - productoActual.descuento / 100)
+        : productoActual.precio;
+      
+      // Añadir al total el precio con descuento (si aplica) multiplicado por la cantidad
+      return total + (productoActual.cantidad * precioFinal);
+    }, 0),
+    [cart]
+  );
+  
 
     return{
 

@@ -106,7 +106,8 @@ function Nav({cart,eliminarDeCarro,incrementarCantidad,decrementarCantidad,limpi
                                         </td>
                                         <td>{juego.nombre}</td>
                                         <td className="fw-bold">
-                                               ${juego.precio}MXN
+                                        ${juego.descuento ? (juego.precio * (1 - juego.descuento / 100)).toFixed(2) : juego.precio} MXN
+
                                         </td>
                                         <td className="flex align-items-start gap-4">
                                             <button type="button" className="btn btn-dark" onClick={()=>decrementarCantidad(juego.id)} >
