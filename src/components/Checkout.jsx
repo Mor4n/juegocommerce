@@ -1,9 +1,9 @@
+/* eslint-disable no-undef */
 import React from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import useCart from '../hooks/useCart';
 
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 const Checkout = () => {
   const { cart, totalPagar } = useCart();
@@ -11,7 +11,7 @@ const Checkout = () => {
   const handleCheckout = async () => {
     
 
-    const response = await fetch('http://localhost:5000/create-checkout-session', {
+    const response = await fetch(import.meta.env.VITE_SERVER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -35,8 +35,8 @@ const Checkout = () => {
   };
 
   return (
-    <button onClick={handleCheckout} className="btn btn-primary">
-      Pagar con Stripe (${totalPagar.toFixed(2)})
+    <button onClick={handleCheckout} className="btn btn-primary w-100">
+      Pagar con Stripe 
     </button>
   );
 };

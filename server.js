@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import express from 'express';
 import Stripe from 'stripe';
 import cors from 'cors';
