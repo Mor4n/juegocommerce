@@ -13,11 +13,15 @@ import { useImportarContextoProd } from "../context/ProdContext";
     }
     const [cart,setCart] = useState(carritoInicial);
 
+
     const { juegos, getJuegos } = useImportarContextoProd();
     useEffect(() => {
         getJuegos();
     }, [getJuegos]); // Agrega getJuegos en las dependencias para evitar advertencias
     
+    // Obtener el carrito directamente del local storage
+    const getCartData = () => JSON.parse(localStorage.getItem("cart")) || [];
+
     
     const ITEM_MAXIMOS = 5;
     const ITEM_MINIMOS = 1;
@@ -118,7 +122,8 @@ import { useImportarContextoProd } from "../context/ProdContext";
         limpiarCarrito,
         setCart,
         vacio,
-        totalPagar
+        totalPagar,
+        getCartData
     }
 }
 

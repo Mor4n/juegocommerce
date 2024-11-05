@@ -1,17 +1,20 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import useCart from '../hooks/useCart';
 
 
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 const Checkout = () => {
-  const { cart, totalPagar } = useCart();
+  
+  const { getCartData } = useCart();
 
   const handleCheckout = async () => {
-    
 
-    const response = await fetch(import.meta.env.VITE_SERVER_URL, {
+    const cart = getCartData();
+
+    const response = await fetch('http://localhost:5000/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
