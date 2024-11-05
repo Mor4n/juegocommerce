@@ -11,7 +11,9 @@ import Nav from '../components/Nav'
 import { useEffect } from 'react'
 import supabase from '../supabase/client'
 import JuegoDetalles from '../components/JuegoDetalles'
-
+import TablaJuegos from '../components/TablaJuegos'
+import EditarProducto from '../components/EditarProducto'
+import InsertarProducto from "../components/InsertarProducto"
 
 
 
@@ -46,6 +48,9 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/juego/:id" element={<JuegoDetalles />} />
+            <Route path="/JuegosAdmin" element={<TablaJuegos />} />
+            <Route path="/editarjuego/:id" element={<EditarProducto />} />
+            <Route path="/insertarjuego/" element={<InsertarProducto />} />
           </Routes>
         </ProdContextProvider>
         

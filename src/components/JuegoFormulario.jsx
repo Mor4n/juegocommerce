@@ -1,4 +1,4 @@
-//!Agregar juego a la BDD
+//!Agregar juego a la BDD, solo por si se necesita
 import  { useState } from 'react'
 import supabase from '../supabase/client';
 
@@ -14,7 +14,7 @@ function JuegoFormulario() {
         try {
 
             const user = await supabase.auth.getUser();
-            console.log(user);
+            
             const resultado = await supabase.from('productos').insert(
                 {
                     nombre:nombreJuego,
