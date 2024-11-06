@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import  supabase  from '../supabase/client';
+import Nav from './Nav';
+
 const EditarProducto = () => {
     const { id } = useParams(); // Obtener el ID del producto de la URL
     const navigate = useNavigate();
@@ -55,6 +57,9 @@ const EditarProducto = () => {
     };
   
     return (
+      <>
+      
+      
       <div className="container mt-4">
         <h2>Editar Producto</h2>
         <form onSubmit={handleSubmit}>
@@ -101,6 +106,7 @@ const EditarProducto = () => {
           <button type="submit" className="btn btn-primary">Guardar Cambios</button>
         </form>
       </div>
+      </>
     );
   };
 

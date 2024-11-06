@@ -16,6 +16,8 @@ function Juego({juego,agregarCarro}) {
         navigate(`/juego/${juego.id}`);
       };
 
+      const precioDescontado = juego.descuento ? juego.precio * (1 - juego.descuento / 100) : null;
+
 
     return (
         <>
@@ -28,7 +30,15 @@ function Juego({juego,agregarCarro}) {
                     <div className="card-body">
                         <h6 className="card-subtitle mb-2 text-muted">{plataforma}</h6>
                         <h5 className="card-title">{nombre}</h5>
-                        <p className="card-text">$ {precio} MXN</p>
+                        <p className="card-text"><strong>Precio:</strong> ${precio} MXN </p>
+                        {juego.descuento && (<>
+                <p className="card-text"><strong>Descuento:</strong> {juego.descuento}%</p>
+                <p className="card-text text-success">
+                  <strong>Juego con descuento:</strong> ${precioDescontado.toFixed(2)}
+                </p>
+                </>
+              )}
+                      
                         <button className="btn btn-primary" onClick={()=>agregarCarro(juego) /*{copia lo que tengo y agrega algo al carrito}*/}
                         >Añadir a carrito</button>
                         

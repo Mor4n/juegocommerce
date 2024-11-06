@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 const TablaJuegos = () => {
     const [productos, setProductos] = useState([]);
   const [productIdToDelete, setProductIdToDelete] = useState(null);
+  const [nombreABorrar, setNombreABorrar] = useState(''); 
   const [resultMessage, setResultMessage] = useState('');
   const [showResultModal, setShowResultModal] = useState(false);
 
@@ -22,6 +23,11 @@ const TablaJuegos = () => {
     fetchProductos();
   }, []);
 
+  const handleDeleteClick = (id, nombre) => {
+    setProductIdToDelete(id);
+    setNombreABorrar(nombre); 
+  };
+
   // Función para eliminar un producto
   const deleteProduct = async (id) => {
     const { error } = await supabase.from('productos').delete().eq('id', id);
@@ -29,7 +35,7 @@ const TablaJuegos = () => {
       setResultMessage(`Hubo un error: ${error.message}`);
       setShowResultModal(true);
     } else {
-      setResultMessage('Producto eliminado exitosamente.');
+      setResultMessage(`Se ha eliminado ${nombreABorrar} exitosamente.`);
       fetchProductos(); // Refrescar la lista
       setShowResultModal(true);
     }
@@ -80,7 +86,7 @@ const TablaJuegos = () => {
     className="btn btn-danger" 
     data-bs-toggle="modal" 
     data-bs-target="#confirmDeleteModal" 
-    onClick={() => setProductIdToDelete(producto.id)}>
+   onClick={() => handleDeleteClick(producto.id, producto.nombre)}>
     Eliminar
   </button>
 </td>
@@ -99,7 +105,7 @@ const TablaJuegos = () => {
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
-              <p>¿Está seguro de que desea eliminar este producto?</p>
+              <p>¿Está seguro de que desea eliminar el juego <strong>{nombreABorrar}</strong>?</p>
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
