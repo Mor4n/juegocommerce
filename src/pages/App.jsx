@@ -14,6 +14,8 @@ import JuegoDetalles from '../components/JuegoDetalles'
 import TablaJuegos from '../components/TablaJuegos'
 import EditarProducto from '../components/EditarProducto'
 import InsertarProducto from "../components/InsertarProducto"
+import CrearCuenta from './CrearCuenta'
+import Perfil from './Perfil'
 
 
 
@@ -46,11 +48,15 @@ function App() {
             <Route path="/" element={<Principal/>}></Route>
             <Route path="/HomeAdmin" element={<HomeAdmin />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/registro/" element={<CrearCuenta />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/juego/:id" element={<JuegoDetalles />} />
             <Route path="/JuegosAdmin" element={<TablaJuegos />} />
             <Route path="/editarjuego/:id" element={<EditarProducto />} />
             <Route path="/insertarjuego/" element={<InsertarProducto />} />
+            <Route path="/perfil/" element={<Perfil />} />
+
+
           </Routes>
         </ProdContextProvider>
         
