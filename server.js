@@ -40,7 +40,7 @@ app.post('/create-checkout-session', async (req, res) => {
             payment_method_types: ['card'],
             line_items: lineItems,
             mode: 'payment',
-            success_url: `${process.env.CLIENT_URL}/success`,  // URL para éxito
+            success_url: `${process.env.CLIENT_URL}/comprarealizada`,  // URL para éxito
             cancel_url: `${process.env.CLIENT_URL}/`,    // URL para cancelación
         });
 

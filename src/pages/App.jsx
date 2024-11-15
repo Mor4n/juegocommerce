@@ -16,6 +16,8 @@ import EditarProducto from '../components/EditarProducto'
 import InsertarProducto from "../components/InsertarProducto"
 import CrearCuenta from './CrearCuenta'
 import Perfil from './Perfil'
+import CompraRealizada from '../components/CompraRealizada'
+import DetallePedido from '../components/DetallePedido'
 
 
 
@@ -51,10 +53,12 @@ function App() {
             <Route path="/registro/" element={<CrearCuenta />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/juego/:id" element={<JuegoDetalles />} />
+            <Route path="/pedidos/:pedidoId" element={<DetallePedido />} />
             <Route path="/JuegosAdmin" element={<TablaJuegos />} />
             <Route path="/editarjuego/:id" element={<EditarProducto />} />
             <Route path="/insertarjuego/" element={<InsertarProducto />} />
             <Route path="/perfil/" element={<Perfil />} />
+            <Route path="/comprarealizada/" element={<CompraRealizada />} />
 
 
           </Routes>

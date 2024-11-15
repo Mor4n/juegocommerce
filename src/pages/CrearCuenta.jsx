@@ -12,12 +12,12 @@ function CrearCuenta() {
   const [direccion, setDireccion] = useState('');
   const [telefono, setTelefono] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [showModal, setShowModal] = useState(false); // Controla la visibilidad del modal
+  const [showModal, setShowModal] = useState(false); // visibilidad del modal
 
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    // Validar si todos los campos están completos
+    // validación
     if (!email || !password || !nombre || !apellidos || !direccion || !telefono) {
       setErrorMessage("Rellene todos los campos");
       return;
@@ -54,7 +54,7 @@ function CrearCuenta() {
       }
 
       console.log("Cuenta creada con éxito");
-      setShowModal(true); // modal de éxito
+      setShowModal(true); //mostrar modal xdxdxd
     } catch (error) {
       console.error("Error durante la creación de la cuenta:", error.message);
       setErrorMessage(`Error al crear la cuenta. ${error.message}`);
@@ -63,7 +63,7 @@ function CrearCuenta() {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    navigate('/login'); // inicio de sesión
+    navigate('/login');
   };
 
   return (
@@ -72,7 +72,7 @@ function CrearCuenta() {
       <div className="container mt-5">
         <div className="row justify-content-center">
           <div className="col-md-6">
-            {/* Mostrar alert solo si hay un error */}
+            {/* error */}
             {errorMessage && (
               <div className="alert alert-danger alert-dismissible fade show" role="alert">
                 <strong>Error:</strong> {errorMessage}
@@ -125,7 +125,7 @@ function CrearCuenta() {
                   <div className="mb-3">
                     <label htmlFor="telefono" className="form-label">Teléfono</label>
                     <input 
-                      type="text" 
+                      type="number" 
                       className="form-control" 
                       id="telefono" 
                       placeholder="Tu teléfono" 
@@ -166,7 +166,7 @@ function CrearCuenta() {
         </div>
       </div>
 
-      {/* Modal de éxito */}
+      {/* éxito */}
       {showModal && (
         <>
           <div className="modal-backdrop fade show"></div> 
