@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import "./nav.css";
-import { useNavigate, Link } from "react-router-dom"; 
+import { useNavigate, Link } from "react-router-dom";
 import supabase from "../supabase/client";
 import Checkout from "./Checkout";
-import NavBusqueda from "./NavBusqueda";
 
 function Nav({
   cart,
@@ -19,25 +18,27 @@ function Nav({
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
-  const [userName, setUserName] = useState(""); // Estado para wardar  el nombre del usuario
+  const [userName, setUserName] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false); // Estado para verificar si es administrador
 
   useEffect(() => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getUser();
       setUser(data.user);
 
-      // buscar en users el correo coincidente
       if (data.user) {
+        // Verificar si el usuario tiene privilegios de administrador
         const { data: userData, error } = await supabase
           .from("usuarios")
-          .select("nombre")
+          .select("nombre, admin")
           .eq("email", data.user.user_metadata.email)
           .single();
 
         if (userData) {
-          setUserName(userData.nombre); // poner nombre obtenido
+          setUserName(userData.nombre);
+          setIsAdmin(userData.admin === true); // Establecer si es administrador
         } else if (error) {
-          console.error("Error al obtener el nombre del usuario:", error);
+          console.error("Error al obtener el nombre del usuario / rol:", error);
         }
       }
     };
@@ -48,15 +49,16 @@ function Nav({
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
-    setUserName(""); // limpiar el nombre al cerrar sesion
+    setUserName("");
+    setIsAdmin(false); // limpiar el estado admin al cerrar sesión
   };
 
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value); // actualiza el estado del término de búsqueda
+    setSearchTerm(e.target.value);
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // norecargues
+    e.preventDefault();
   };
 
   return (
@@ -92,6 +94,11 @@ function Nav({
                   <Link to="/perfil" style={{ cursor: 'pointer', margin: '0px 30px 0px 0px' }}>
                     Bienvenido, {userName}
                   </Link>
+                  {isAdmin && (
+                    <Link to="/panel" style={{ cursor: 'pointer', margin: '0px 30px 0px 0px' }}>
+                      Panel de Administración
+                    </Link>
+                  )}
                   <span style={{ cursor: 'pointer', margin: '0px 0px 0px 50px' }} onClick={handleLogout}>Cerrar sesión</span>
                 </div>
               ) : (
@@ -104,7 +111,7 @@ function Nav({
             <img className="img-fluid" src="\img\carrito.png" alt="imagen carrito" width={30} />
             <div id="carrito" className="bg-dark p-3">
               {vacio ? (
-                <p className="text-center text-white">El carrito esta vacio</p>
+                <p className="text-center text-white">El carrito está vacío</p>
               ) : (
                 <>
                   <table className="w-100 table">

@@ -1,16 +1,18 @@
-// src/components/ProductsTable.js
 import React, { useEffect, useState } from 'react';
-import  supabase  from '../supabase/client';
-import Nav from "./Nav"
-import "./modalgris.css"
-import { Link } from 'react-router-dom';
+import supabase from '../supabase/client';
+import Nav from './Nav';
+import './modalgris.css';
+import InsertarProducto from './InsertarProducto';
+import EditarProducto from './EditarProducto';
 
 const TablaJuegos = () => {
-    const [productos, setProductos] = useState([]);
+  const [productos, setProductos] = useState([]);
   const [productIdToDelete, setProductIdToDelete] = useState(null);
-  const [nombreABorrar, setNombreABorrar] = useState(''); 
+  const [nombreABorrar, setNombreABorrar] = useState('');
   const [resultMessage, setResultMessage] = useState('');
   const [showResultModal, setShowResultModal] = useState(false);
+  const [activeComponent, setActiveComponent] = useState('tabla');
+  const [selectedProducto, setSelectedProducto] = useState(null);
 
   // Función para obtener productos
   const fetchProductos = async () => {
@@ -25,7 +27,7 @@ const TablaJuegos = () => {
 
   const handleDeleteClick = (id, nombre) => {
     setProductIdToDelete(id);
-    setNombreABorrar(nombre); 
+    setNombreABorrar(nombre);
   };
 
   // Función para eliminar un producto
@@ -41,60 +43,84 @@ const TablaJuegos = () => {
     }
   };
 
+  const renderComponent = () => {
+    switch (activeComponent) {
+      case 'tabla':
+        return (
+          <div className="table-responsive">
+            <table className="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th>Precio</th>
+                  <th>Imagen</th>
+                  <th>Stock</th>
+                  <th>Categoría</th>
+                  <th>Fecha de Lanzamiento</th>
+                  <th>Plataforma</th>
+                  <th>Destacado</th>
+                  <th>Descuento</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {productos.map((producto) => (
+                  <tr key={producto.id}>
+                    <td>{producto.id}</td>
+                    <td>{producto.nombre}</td>
+                    <td>{producto.descripcion}</td>
+                    <td>{producto.precio}</td>
+                    <td><img src={producto.imagen_url} alt={producto.nombre} style={{ width: '50px' }} /></td>
+                    <td>{producto.stock}</td>
+                    <td>{producto.categoria}</td>
+                    <td>{new Date(producto.fecha_lanzamiento).toLocaleDateString()}</td>
+                    <td>{producto.plataforma}</td>
+                    <td>{producto.es_destacado ? 'Sí' : 'No'}</td>
+                    <td>{producto.descuento}%</td>
+                    <td>
+                      <button className="btn btn-warning me-2" onClick={() => {
+                        setSelectedProducto(producto);  // Establecer el producto seleccionado
+                        setActiveComponent('editar');  // Cambiar el componente activo a "editar"
+                      }}>
+                        Modificar
+                      </button>
+
+                      <button
+                        className="btn btn-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#confirmDeleteModal"
+                        onClick={() => handleDeleteClick(producto.id, producto.nombre)}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      case 'insertar':
+        return <InsertarProducto setActiveComponent={setActiveComponent} />;
+      case 'editar':
+        return <EditarProducto producto={selectedProducto} setActiveComponent={setActiveComponent} />;
+      default:
+        return <div>Componente no encontrado</div>;
+    }
+  };
+
   return (
     <div className="container mt-4">
-      <h2>Productos</h2>
-      <Link to="/insertarjuego" className="btn btn-success mb-3">Agregar Producto</Link>
+      {activeComponent === 'tabla' && (
+        <>
+          <h2>Productos</h2>
+          <button className="btn btn-success mb-3" onClick={() => setActiveComponent('insertar')}>Agregar Producto</button>
+        </>
+      )}
 
-      <div className="table-responsive">
-        <table className="table table-bordered table-striped">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Descripción</th>
-              <th>Precio</th>
-              <th>Imagen</th>
-              <th>Stock</th>
-              <th>Categoría</th>
-              <th>Fecha de Lanzamiento</th>
-              <th>Plataforma</th>
-              <th>Destacado</th>
-              <th>Descuento</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productos.map((producto) => (
-              <tr key={producto.id}>
-                <td>{producto.id}</td>
-                <td>{producto.nombre}</td>
-                <td>{producto.descripcion}</td>
-                <td>{producto.precio}</td>
-                <td><img src={producto.imagen_url} alt={producto.nombre} style={{ width: '50px' }} /></td>
-                <td>{producto.stock}</td>
-                <td>{producto.categoria}</td>
-                <td>{new Date(producto.fecha_lanzamiento).toLocaleDateString()}</td>
-                <td>{producto.plataforma}</td>
-                <td>{producto.es_destacado ? 'Sí' : 'No'}</td>
-                <td>{producto.descuento}%</td>
-                <td>
-  <Link to={`/editarjuego/${producto.id}`} className="btn btn-warning me-2">
-    Modificar
-  </Link>
-  <button 
-    className="btn btn-danger" 
-    data-bs-toggle="modal" 
-    data-bs-target="#confirmDeleteModal" 
-   onClick={() => handleDeleteClick(producto.id, producto.nombre)}>
-    Eliminar
-  </button>
-</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {renderComponent()}
 
       {/* Modal de Confirmación */}
       <div className="modal fade" id="confirmDeleteModal" tabIndex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
@@ -109,7 +135,7 @@ const TablaJuegos = () => {
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="button" className="btn btn-danger" 
+              <button type="button" className="btn btn-danger"
                 onClick={() => {
                   deleteProduct(productIdToDelete);
                   setProductIdToDelete(null); // Resetear el ID del producto

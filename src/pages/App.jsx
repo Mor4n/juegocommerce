@@ -18,6 +18,7 @@ import CrearCuenta from './CrearCuenta'
 import Perfil from './Perfil'
 import CompraRealizada from '../components/CompraRealizada'
 import DetallePedido from '../components/DetallePedido'
+import Panel from '../components/Panel'
 
 
 
@@ -59,6 +60,7 @@ function App() {
             <Route path="/insertarjuego/" element={<InsertarProducto />} />
             <Route path="/perfil/" element={<Perfil />} />
             <Route path="/comprarealizada/" element={<CompraRealizada />} />
+            <Route path="/panel/" element={<Panel />} />
 
 
           </Routes>
