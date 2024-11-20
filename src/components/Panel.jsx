@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import NavSolo from '../components/NavSolo';
 import GestionUsuarios from '../components/GestionUsuarios';
 import AdministrarProductos from '../components/AdministrarProductos';
-
+import Reportes from './Reportes'
 
 function Panel() {
   const [activeComponent, setActiveComponent] = useState('usuarios');
@@ -14,6 +14,8 @@ function Panel() {
         return <GestionUsuarios />;
       case 'productos':
         return <AdministrarProductos />;
+      case 'reportes':
+        return <Reportes />;
       default:
         return <GestionUsuarios />;
     }
@@ -41,9 +43,22 @@ function Panel() {
                     className={`nav-link ${activeComponent === 'productos' ? 'active' : ''}`}
                     onClick={() => setActiveComponent('productos')}
                   >
+                    
                     Administrar Productos
                   </button>
                 </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${activeComponent === 'reportes  ' ? 'active' : ''}`}
+                    onClick={() => setActiveComponent('reportes')}
+                  >
+                    
+                    Reportes
+                  </button>
+                </li>
+
+
+
               </ul>
             </div>
           </nav>

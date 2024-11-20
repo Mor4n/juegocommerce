@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Reporte de Ventas</h1>
+      <p>Rango de fechas: {{fechaDesde}} a {{fechaHasta}}</p>
+      <p>Ventas Totales: ${{ventasTotales}}</p>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad Vendida</th>
+          <th>Total ($)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each ventas}}
+        <tr>
+          <td>{{producto}}</td>
+          <td>{{cantidad}}</td>
+          <td>{{total}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </body>
+</html>

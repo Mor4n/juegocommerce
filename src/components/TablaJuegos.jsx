@@ -7,23 +7,57 @@ import EditarProducto from './EditarProducto';
 
 const TablaJuegos = () => {
   const [productos, setProductos] = useState([]);
+  const [filteredProductos, setFilteredProductos] = useState([]); // Estado para productos filtrados
   const [productIdToDelete, setProductIdToDelete] = useState(null);
   const [nombreABorrar, setNombreABorrar] = useState('');
   const [resultMessage, setResultMessage] = useState('');
   const [showResultModal, setShowResultModal] = useState(false);
   const [activeComponent, setActiveComponent] = useState('tabla');
   const [selectedProducto, setSelectedProducto] = useState(null);
+  const [sortCriteria, setSortCriteria] = useState('precioAsc'); // Estado para el criterio de ordenación
+  const [searchQuery, setSearchQuery] = useState(''); // Estado para el cuadro de búsqueda
 
   // Función para obtener productos
   const fetchProductos = async () => {
     const { data, error } = await supabase.from('productos').select('*');
     if (error) console.error('Error fetching productos:', error);
-    else setProductos(data);
+    else {
+      setProductos(data);
+      setFilteredProductos(data); // Inicializar los productos filtrados con todos los productos
+    }
   };
 
   useEffect(() => {
     fetchProductos();
   }, []);
+
+  // Función para filtrar productos basados en la búsqueda
+  const filterProducts = (query) => {
+    if (!query) {
+      setFilteredProductos(productos); // Si no hay búsqueda, mostrar todos los productos
+    } else {
+      const filtered = productos.filter((producto) => {
+        return (
+          producto.id.toString().includes(query) || // Filtrar por ID
+          producto.nombre.toLowerCase().includes(query.toLowerCase()) || // Filtrar por Nombre
+          producto.descripcion.toLowerCase().includes(query.toLowerCase()) || // Filtrar por Descripción
+          producto.precio.toString().includes(query) || // Filtrar por Precio
+          producto.categoria.toLowerCase().includes(query.toLowerCase()) || // Filtrar por Categoría
+          producto.plataforma.toLowerCase().includes(query.toLowerCase()) || // Filtrar por Plataforma
+          producto.stock.toString().includes(query) || // Filtrar por Precio
+          new Date(producto.fecha_lanzamiento).toLocaleDateString().includes(query) // Filtrar por Fecha de Lanzamiento
+        );
+      });
+      setFilteredProductos(filtered);
+    }
+  };
+
+  // Cambiar el texto del cuadro de búsqueda y aplicar el filtro
+  const handleSearchChange = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    filterProducts(query);
+  };
 
   const handleDeleteClick = (id, nombre) => {
     setProductIdToDelete(id);
@@ -43,11 +77,78 @@ const TablaJuegos = () => {
     }
   };
 
+  // Función para ordenar productos
+  const sortProducts = (criteria) => {
+    const sortedProducts = [...filteredProductos];
+    switch (criteria) {
+      case 'precioAsc':
+        sortedProducts.sort((a, b) => a.precio - b.precio);
+        break;
+      case 'precioDesc':
+        sortedProducts.sort((a, b) => b.precio - a.precio);
+        break;
+      case 'nombreAsc':
+        sortedProducts.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        break;
+      case 'nombreDesc':
+        sortedProducts.sort((a, b) => b.nombre.localeCompare(a.nombre));
+        break;
+      case 'fechaAsc':
+        sortedProducts.sort((a, b) => new Date(a.fecha_lanzamiento) - new Date(b.fecha_lanzamiento));
+        break;
+      case 'fechaDesc':
+        sortedProducts.sort((a, b) => new Date(b.fecha_lanzamiento) - new Date(a.fecha_lanzamiento));
+        break;
+      case 'idAsc':
+        sortedProducts.sort((a, b) => a.id - b.id);
+        break;
+      case 'idDesc':
+        sortedProducts.sort((a, b) => b.id - a.id);
+        break;
+      default:
+        break;
+    }
+    setFilteredProductos(sortedProducts);
+  };
+
+  // Cambiar el criterio de ordenación
+  const handleSortChange = (event) => {
+    const selectedCriteria = event.target.value;
+    setSortCriteria(selectedCriteria);
+    sortProducts(selectedCriteria);
+  };
+
   const renderComponent = () => {
     switch (activeComponent) {
       case 'tabla':
         return (
           <div className="table-responsive">
+            <div className="d-flex justify-content-between mb-3">
+              <h2>Productos</h2>
+              <div className="d-flex">
+                <input
+                  type="text"
+                  className="form-control me-3"
+                  placeholder="Buscar por ID, Nombre, Descripción,  Precio, Stock, Categoría, Plataforma, Fecha de Lanzamiento"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+                <select
+                  className="form-select"
+                  value={sortCriteria}
+                  onChange={handleSortChange}
+                >
+                  <option value="precioAsc">Precio: Menor a Mayor</option>
+                  <option value="precioDesc">Precio: Mayor a Menor</option>
+                  <option value="nombreAsc">Nombre: A - Z</option>
+                  <option value="nombreDesc">Nombre: Z - A</option>
+                  <option value="fechaAsc">Fecha de Lanzamiento: Más Antigua</option>
+                  <option value="fechaDesc">Fecha de Lanzamiento: Más Reciente</option>
+                  <option value="idAsc">ID: Menor a Mayor</option>
+                  <option value="idDesc">ID: Mayor a Menor</option>
+                </select>
+              </div>
+            </div>
             <table className="table table-bordered table-striped">
               <thead>
                 <tr>
@@ -60,13 +161,11 @@ const TablaJuegos = () => {
                   <th>Categoría</th>
                   <th>Fecha de Lanzamiento</th>
                   <th>Plataforma</th>
-                  <th>Destacado</th>
-                  <th>Descuento</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {productos.map((producto) => (
+                {filteredProductos.map((producto) => (
                   <tr key={producto.id}>
                     <td>{producto.id}</td>
                     <td>{producto.nombre}</td>
@@ -77,8 +176,6 @@ const TablaJuegos = () => {
                     <td>{producto.categoria}</td>
                     <td>{new Date(producto.fecha_lanzamiento).toLocaleDateString()}</td>
                     <td>{producto.plataforma}</td>
-                    <td>{producto.es_destacado ? 'Sí' : 'No'}</td>
-                    <td>{producto.descuento}%</td>
                     <td>
                       <button className="btn btn-warning me-2" onClick={() => {
                         setSelectedProducto(producto);  // Establecer el producto seleccionado
@@ -115,7 +212,6 @@ const TablaJuegos = () => {
     <div className="container mt-4">
       {activeComponent === 'tabla' && (
         <>
-          <h2>Productos</h2>
           <button className="btn btn-success mb-3" onClick={() => setActiveComponent('insertar')}>Agregar Producto</button>
         </>
       )}
@@ -125,39 +221,35 @@ const TablaJuegos = () => {
       {/* Modal de Confirmación */}
       <div className="modal fade" id="confirmDeleteModal" tabIndex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content bg-light"> {/* Cambia a un fondo gris claro aquí */}
+          <div className="modal-content bg-light">
             <div className="modal-header">
               <h5 className="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
-              <p>¿Está seguro de que desea eliminar el juego <strong>{nombreABorrar}</strong>?</p>
+              <p>¿Estás seguro de que deseas eliminar el producto {nombreABorrar}?</p>
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="button" className="btn btn-danger"
-                onClick={() => {
-                  deleteProduct(productIdToDelete);
-                  setProductIdToDelete(null); // Resetear el ID del producto
-                }} data-bs-dismiss="modal">Eliminar</button>
+              <button type="button" className="btn btn-danger" onClick={() => deleteProduct(productIdToDelete)}>Eliminar</button>
             </div>
           </div>
         </div>
       </div>
 
       {/* Modal de Resultado */}
-      <div className={`modal fade ${showResultModal ? 'show confirmacion' : ''}`} style={{ display: showResultModal ? 'block' : 'none' }} tabIndex="-1" role="dialog">
-        <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className="modal-content bg-light modal-bg-gray"> {/* Aplicar fondo gris aquí */}
+      <div className={`modal fade ${showResultModal ? 'show' : ''}`} tabIndex="-1" style={{ display: showResultModal ? 'block' : 'none' }} aria-hidden="true">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content bg-light">
             <div className="modal-header">
-              <h5 className="modal-title">Resultado de la Eliminación</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => setShowResultModal(false)}></button>
+              <h5 className="modal-title">Resultado</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" onClick={() => setShowResultModal(false)}></button>
             </div>
             <div className="modal-body">
               <p>{resultMessage}</p>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-primary" onClick={() => setShowResultModal(false)}>Cerrar</button>
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => setShowResultModal(false)}>Cerrar</button>
             </div>
           </div>
         </div>

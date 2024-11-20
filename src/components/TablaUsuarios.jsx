@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import supabase from '../supabase/client';
-import EditarUsuario from './EditarUsuario';
 
 const TablaUsuarios = ({ onEdit, onGoBack }) => {
   const [usuarios, setUsuarios] = useState([]);
@@ -8,7 +7,11 @@ const TablaUsuarios = ({ onEdit, onGoBack }) => {
   const [nombreABorrar, setNombreABorrar] = useState('');
   const [resultMessage, setResultMessage] = useState('');
   const [showResultModal, setShowResultModal] = useState(false);
+  const [filtro, setFiltro] = useState('');
+  const [orden, setOrden] = useState('asc');
+  const [campoOrdenar, setCampoOrdenar] = useState('id');
 
+  // Obtener la lista de usuarios
   const fetchUsuarios = async () => {
     const { data, error } = await supabase.from('usuarios').select('*');
     if (error) {
@@ -21,11 +24,6 @@ const TablaUsuarios = ({ onEdit, onGoBack }) => {
   useEffect(() => {
     fetchUsuarios();
   }, []);
-
-  const handleDeleteClick = (id, nombre) => {
-    setUsuarioIdToDelete(id);
-    setNombreABorrar(nombre);
-  };
 
   // Función para eliminar un usuario
   const deleteUser = async (id) => {
@@ -40,12 +38,80 @@ const TablaUsuarios = ({ onEdit, onGoBack }) => {
     }
   };
 
-  const handleEditClick = (usuario) => {
-    onEdit(usuario);  // Llamamos a la función pasada desde el componente padre (GestionUsuarios)
+  // Función para filtrar los usuarios
+  const filterUsuarios = (query = '') => {
+    const lowercasedQuery = query ? query.toLowerCase() : '';
+
+    return usuarios.filter((usuario) => {
+      return (
+        String(usuario.id).includes(lowercasedQuery) ||
+        (usuario.email && usuario.email.toLowerCase().includes(lowercasedQuery)) ||
+        (usuario.nombre && usuario.nombre.toLowerCase().includes(lowercasedQuery)) ||
+        (usuario.apellidos && usuario.apellidos.toLowerCase().includes(lowercasedQuery)) ||
+        (usuario.direccion && usuario.direccion.toLowerCase().includes(lowercasedQuery)) ||
+        (usuario.telefono && String(usuario.telefono).includes(lowercasedQuery)) ||
+        (usuario.creado_en && new Date(usuario.creado_en).toLocaleDateString().includes(lowercasedQuery)) 
+      );
+    });
   };
+
+  // Función para ordenar los usuarios
+  const sortUsuarios = (usuarios) => {
+    return usuarios.sort((a, b) => {
+      if (campoOrdenar === 'id' || campoOrdenar === 'telefono') {
+        return orden === 'asc' ? a[campoOrdenar] - b[campoOrdenar] : b[campoOrdenar] - a[campoOrdenar];
+      }
+      if (campoOrdenar === 'creado_en') {
+        const dateA = new Date(a[campoOrdenar]);
+        const dateB = new Date(b[campoOrdenar]);
+        return orden === 'asc' ? dateA - dateB : dateB - dateA;
+      }
+      const valA = a[campoOrdenar] ? a[campoOrdenar].toLowerCase() : '';
+      const valB = b[campoOrdenar] ? b[campoOrdenar].toLowerCase() : '';
+      return orden === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    });
+  };
+
+  // Filtrar y ordenar usuarios antes de renderizarlos
+  const filteredAndSortedUsuarios = sortUsuarios(filterUsuarios(filtro));
 
   return (
     <div className="container mt-4">
+      <div className="row mb-3">
+        <div className="col-md-6">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Buscar..."
+            value={filtro}
+            onChange={(e) => setFiltro(e.target.value)}
+          />
+        </div>
+        <div className="col-md-6">
+          <select
+            className="form-select"
+            onChange={(e) => {
+              const [campo, orden] = e.target.value.split('-');
+              setCampoOrdenar(campo);
+              setOrden(orden);
+            }}
+          >
+            <option value="id-asc">Ordenar por ID (ascendente)</option>
+            <option value="id-desc">Ordenar por ID (descendente)</option>
+            <option value="email-asc">Ordenar por Email (A-Z)</option>
+            <option value="email-desc">Ordenar por Email (Z-A)</option>
+            <option value="nombre-asc">Ordenar por Nombre (A-Z)</option>
+            <option value="nombre-desc">Ordenar por Nombre (Z-A)</option>
+            <option value="apellidos-asc">Ordenar por Apellidos (A-Z)</option>
+            <option value="apellidos-desc">Ordenar por Apellidos (Z-A)</option>
+            <option value="creado_en-asc">Ordenar por Fecha de creación (más antigua)</option>
+            <option value="creado_en-desc">Ordenar por Fecha de creación (más reciente)</option>
+            <option value="admin-asc">Ordenar por Admin (No Admin primero)</option>
+            <option value="admin-desc">Ordenar por Admin (Admin primero)</option>
+          </select>
+        </div>
+      </div>
+
       <div className="table-responsive">
         <table className="table table-bordered table-striped">
           <thead>
@@ -62,7 +128,7 @@ const TablaUsuarios = ({ onEdit, onGoBack }) => {
             </tr>
           </thead>
           <tbody>
-            {usuarios.map((usuario) => (
+            {filteredAndSortedUsuarios.map((usuario) => (
               <tr key={usuario.id}>
                 <td>{usuario.id}</td>
                 <td>{usuario.email}</td>
@@ -73,7 +139,7 @@ const TablaUsuarios = ({ onEdit, onGoBack }) => {
                 <td>{new Date(usuario.creado_en).toLocaleDateString()}</td>
                 <td>{usuario.admin ? 'Sí' : 'No'}</td>
                 <td>
-                  <button className="btn btn-warning me-2" onClick={() => handleEditClick(usuario)}>
+                  <button className="btn btn-warning me-2" onClick={() => onEdit(usuario)}>
                     Modificar
                   </button>
 
@@ -82,7 +148,10 @@ const TablaUsuarios = ({ onEdit, onGoBack }) => {
                     className="btn btn-danger"
                     data-bs-toggle="modal"
                     data-bs-target="#confirmDeleteModal"
-                    onClick={() => handleDeleteClick(usuario.id, usuario.nombre)}
+                    onClick={() => {
+                      setUsuarioIdToDelete(usuario.id);
+                      setNombreABorrar(usuario.nombre);
+                    }}
                   >
                     Eliminar
                   </button>
@@ -128,11 +197,15 @@ const TablaUsuarios = ({ onEdit, onGoBack }) => {
               <p>{resultMessage}</p>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-primary" onClick={() => setShowResultModal(false)}>Cerrar</button>
+              <button type="button" className="btn btn-primary" onClick={() => setShowResultModal(false)}>
+                Cerrar
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      
     </div>
   );
 };
