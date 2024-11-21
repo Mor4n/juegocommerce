@@ -8,11 +8,10 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 const Checkout = () => {
   
-  const { getCartData } = useCart();
+  const { cart } = useCart();  // Accede directamente al cart
 
   const handleCheckout = async () => {
 
-    const cart = getCartData();
 
     const response = await fetch('http://localhost:5000/create-checkout-session', {
       method: 'POST',

@@ -89,6 +89,26 @@ useEffect(() => {
   
           if (errorDetalle) throw errorDetalle;
   
+
+          for (const producto of cart) {
+            const { data: productoData, error: errorFetch } = await supabase
+              .from('productos')
+              .select('stock')
+              .eq('id', producto.id)
+              .single();
+          
+            if (errorFetch) throw errorFetch;
+          
+            const nuevoStock = productoData.stock - producto.cantidad;
+          
+            const { error: errorUpdate } = await supabase
+              .from('productos')
+              .update({ stock: nuevoStock }) // Reducir el stock
+              .eq('id', producto.id); // Filtrar por el id del producto
+          
+            if (errorUpdate) throw errorUpdate;
+          }
+
           // update productos después de que la compra se haya completado
           setProductosComprados([...cart]);
           setCompraGuardada(true); // update solo después de la compra
