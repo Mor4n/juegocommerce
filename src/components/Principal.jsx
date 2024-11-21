@@ -120,8 +120,9 @@ function Principal() {
             >
               <option value="">Todas las plataformas</option>
               <option value="PC">PC</option>
-              <option value="PlayStation">PlayStation</option>
-              <option value="Xbox">Xbox</option>
+              <option value="PlayStation 4">PlayStation 4</option>
+              <option value="Nintendo DS">Nintendo DS</option>
+              <option value="Nintendo Switch">Nintendo Switch</option>
               
             </select>
           </div>
