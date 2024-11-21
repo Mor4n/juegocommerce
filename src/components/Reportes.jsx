@@ -22,13 +22,20 @@ function Reportes() {
   // Función para realizar la consulta de reportes
   const fetchReportes = async () => {
     if (fechaDesde && fechaHasta) {
-      // Obtener los pedidos en el rango de fechas
+      // Asegurarse de que las fechas incluyan todo el día
+      const fechaDesdeConHora = new Date(fechaDesde);
+      fechaDesdeConHora.setHours(0, 0, 0, 0); // Inicia desde las 00:00:00
+  
+      const fechaHastaConHora = new Date(fechaHasta);
+      fechaHastaConHora.setHours(23, 59, 59, 999); // Termina a las 23:59:59
+  
+      // Obtener los pedidos en el rango de fechas ajustado
       const { data: pedidos, error: pedidosError } = await supabase
         .from('pedidos')
         .select('id, total, creado_en')
-        .gte('creado_en', fechaDesde)
-        .lte('creado_en', fechaHasta);
-
+        .gte('creado_en', fechaDesdeConHora.toISOString()) // Usar fecha con hora
+        .lte('creado_en', fechaHastaConHora.toISOString()); // Usar fecha con hora
+  
       if (pedidosError) {
         console.error('Error al obtener pedidos:', pedidosError);
       } else {
@@ -36,12 +43,12 @@ function Reportes() {
         const totalVentas = pedidos.reduce((acc, pedido) => acc + pedido.total, 0);
         setVentasTotales(totalVentas);
       }
-
+  
       // Obtener los detalles de pedidos
       const { data: detallePedidos, error: detalleError } = await supabase
         .from('detalle_pedidos')
         .select('producto_id, cantidad, precio_unitario, pedido_id');
-
+  
       if (detalleError) {
         console.error('Error al obtener detalles de pedidos:', detalleError);
       } else {
@@ -50,7 +57,7 @@ function Reportes() {
         const detallesFiltrados = detallePedidos.filter((detalle) =>
           pedidosIds.includes(detalle.pedido_id)
         );
-
+  
         // Agrupar las ventas por producto
         const ventasProducto = detallesFiltrados.reduce((acc, detalle) => {
           if (!acc[detalle.producto_id]) {
@@ -60,12 +67,12 @@ function Reportes() {
           acc[detalle.producto_id].ingresos += detalle.cantidad * detalle.precio_unitario;
           return acc;
         }, {});
-
+  
         // Obtener los nombres de los productos
         const { data: productosData, error: productosError } = await supabase
           .from('productos')
           .select('id, nombre');
-
+  
         if (productosError) {
           console.error('Error al obtener productos:', productosError);
         } else {
@@ -74,15 +81,16 @@ function Reportes() {
             acc[producto.id] = producto.nombre;
             return acc;
           }, {});
-
+  
           setProductos(productosMap);
-
+  
           // Convertir el objeto de ventasProducto a un array para poder renderizar
           setVentasPorProducto(Object.entries(ventasProducto));
         }
       }
     }
   };
+  
 
   // Función para exportar la tabla completa a PDF
   const exportarPDF = () => {
