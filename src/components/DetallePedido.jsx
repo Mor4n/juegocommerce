@@ -135,28 +135,11 @@ function DetallePedido({ pedidoId }) {
                     Subtotal: ${(item.precio_unitario * item.cantidad).toFixed(2)}
                   </p>
 
-                  {/* Controles de cantidad */}
                   <div className="d-flex justify-content-between">
-                    <button 
-                      className="btn btn-secondary" 
-                      onClick={() => decrementarCantidad(item.id)} 
-                      disabled={(cantidad[item.id] || 1) <= 1}>
-                      -
-                    </button>
-                    <span>{cantidad[item.id] || 1}</span>
-                    <button 
-                      className="btn btn-secondary" 
-                      onClick={() => incrementarCantidad(item.id)} 
-                      disabled={(cantidad[item.id] || 1) >= ITEM_MAXIMOS}>
-                      +
-                    </button>
+                   
+                    
                   </div>
-                  {/* Botón de agregar al carrito */}
-                  <button 
-                    className="btn btn-primary mt-2 w-100" 
-                    onClick={() => agregarAlCarrito(item)}>
-                    Agregar al carrito
-                  </button>
+                 
                 </div>
               </div>
             </div>
