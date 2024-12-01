@@ -218,7 +218,6 @@ const TablaJuegos = () => {
 
       {renderComponent()}
 
-      {/* Modal de Confirmación */}
       <div className="modal fade" id="confirmDeleteModal" tabIndex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content bg-light">

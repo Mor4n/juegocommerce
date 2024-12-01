@@ -77,7 +77,6 @@ function Principal() {
       <div className="container mt-4">
         <div className="row mb-4">
           <div className="col-md-3">
-            {/* Filtro por precio */}
             <label htmlFor="filtroPrecio">Filtrar por precio</label>
             <select
               id="filtroPrecio"
@@ -92,7 +91,6 @@ function Principal() {
           </div>
 
           <div className="col-md-3">
-            {/* Filtro por categoría */}
             <label htmlFor="filtroCategoria">Filtrar por categoría</label>
             <select
               id="filtroCategoria"
@@ -110,7 +108,6 @@ function Principal() {
           </div>
 
           <div className="col-md-3">
-            {/* Filtro por plataforma */}
             <label htmlFor="filtroPlataforma">Filtrar por plataforma</label>
             <select
               id="filtroPlataforma"

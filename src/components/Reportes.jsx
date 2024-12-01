@@ -128,7 +128,6 @@ function Reportes() {
     <div>
       <h2>Reportes de Ventas</h2>
       
-      {/* Formularios para seleccionar fechas */}
       <div className="mb-3">
         <label htmlFor="fechaDesde" className="form-label">Desde</label>
         <input
@@ -151,21 +150,17 @@ function Reportes() {
         />
       </div>
 
-      {/* Botón para obtener los reportes */}
       <button className="btn btn-primary" onClick={fetchReportes}>
         Generar Reporte
       </button>
 
-      {/* Botón para exportar el reporte a PDF */}
       <button className="btn btn-secondary ms-3" onClick={exportarPDF}>
         Exportar a PDF
       </button>
 
-      {/* Ventas Totales */}
       <h3 className="mt-4">Ventas Totales</h3>
       <p>Total de ventas: ${ventasTotales.toFixed(2)}</p>
 
-      {/* Tabla de Ventas por Producto */}
       <h3 className="mt-4">Ventas por Producto</h3>
       <table className="table table-striped">
         <thead>
@@ -179,7 +174,7 @@ function Reportes() {
           {ventasPorProducto.length > 0 ? (
             ventasPorProducto.map(([productoId, datos], index) => (
               <tr key={index}>
-                <td>{productos[productoId] || 'Desconocido'}</td> {/* Mostrar el nombre del producto */}
+                <td>{productos[productoId] || 'Desconocido'}</td>
                 <td>{datos.cantidad}</td>
                 <td>${datos.ingresos.toFixed(2)}</td>
               </tr>

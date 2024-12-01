@@ -143,7 +143,6 @@ const TablaUsuarios = ({ onEdit, onGoBack }) => {
                     Modificar
                   </button>
 
-                  {/* Botón de eliminación */}
                   <button
                     className="btn btn-danger"
                     data-bs-toggle="modal"
@@ -162,7 +161,6 @@ const TablaUsuarios = ({ onEdit, onGoBack }) => {
         </table>
       </div>
 
-      {/* Modal de Confirmación de eliminación */}
       <div className="modal fade" id="confirmDeleteModal" tabIndex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content bg-light">
@@ -185,7 +183,6 @@ const TablaUsuarios = ({ onEdit, onGoBack }) => {
         </div>
       </div>
 
-      {/* Modal de Resultado de la eliminación */}
       <div className={`modal fade ${showResultModal ? 'show confirmacion' : ''}`} style={{ display: showResultModal ? 'block' : 'none' }} tabIndex="-1" role="dialog">
         <div className="modal-dialog modal-dialog-centered" role="document">
           <div className="modal-content bg-light modal-bg-gray">
